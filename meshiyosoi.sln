@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "meshiyosoi", "meshiyosoi\meshiyosoi.csproj", "{FE18C177-50B9-4828-B68A-280B37726BDB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShindanMaker", "ShindanMaker\ShindanMaker.csproj", "{28EB1121-C940-4C0D-8A95-48423F9C751E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FE18C177-50B9-4828-B68A-280B37726BDB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE18C177-50B9-4828-B68A-280B37726BDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE18C177-50B9-4828-B68A-280B37726BDB}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{FE18C177-50B9-4828-B68A-280B37726BDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE18C177-50B9-4828-B68A-280B37726BDB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE18C177-50B9-4828-B68A-280B37726BDB}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{28EB1121-C940-4C0D-8A95-48423F9C751E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{28EB1121-C940-4C0D-8A95-48423F9C751E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{28EB1121-C940-4C0D-8A95-48423F9C751E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{28EB1121-C940-4C0D-8A95-48423F9C751E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
