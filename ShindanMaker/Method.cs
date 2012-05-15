@@ -55,55 +55,78 @@ namespace ShindanMaker
 
         public static void ExecShindan(int id, string name, Action<string> act)
         {
-            HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create("http://shindanmaker.com/"+id);
+
+            var url = "http://shindanmaker.com/"+id;
+
+            // Create the web request object
+            HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(url);
             webRequest.Method = "POST";
-            webRequest.ContentType = "multipart/form-data";
+            webRequest.ContentType = "application/x-www-form-urlencoded";
 
             // Start the request
-            webRequest.BeginGetRequestStream(r =>
+            webRequest.BeginGetRequestStream(new AsyncCallback(e =>
             {
-                try
+
+                HttpWebRequest webRequest1 = (HttpWebRequest)e.AsyncState;
+                // End the stream request operation
+                Stream postStream = webRequest1.EndGetRequestStream(e);
+
+                // Create the post data
+                // Demo POST data 
+                string postData = "u="+HttpUtility.UrlEncode(name);
+
+                byte[] byteArray = Encoding.UTF8.GetBytes(postData);
+
+                // Add the post data to the web request
+                postStream.Write(byteArray, 0, byteArray.Length);
+                postStream.Close();
+
+                // Start the web request
+                webRequest1.BeginGetResponse(new AsyncCallback(e2 =>
                 {
-                    HttpWebRequest request1 = (HttpWebRequest)r.AsyncState;
-                    Stream postStream = request1.EndGetRequestStream(r);
+                    try
+                    {
+                        HttpWebRequest webRequest2 = (HttpWebRequest)e2.AsyncState;
+                        HttpWebResponse response;
 
+                        // End the get response operation
+                        response = (HttpWebResponse)webRequest2.EndGetResponse(e2);
+                        Stream streamResponse = response.GetResponseStream();
+                        TextReader streamReader = new StreamReader(streamResponse, System.Text.Encoding.UTF8);
+                        //var Response = streamReader.ReadToEnd();
+                        //streamResponse.Close();
+                        //streamReader.Close();
+                        //response.Close();
 
-                    string postData = "&u=" + HttpUtility.UrlEncode(name)+"&from=";
-                    byte[] byteArray = Encoding.UTF8.GetBytes(postData);
-
-                    postStream.Write(byteArray, 0, byteArray.Length);
-                    postStream.Close();
-
-                    request1.BeginGetResponse(
-                        s =>
+                        //using (var reader = new StreamReader(Response, System.Text.Encoding.UTF8))
+                        using (var sgmlReader = new SgmlReader { InputStream = streamReader })
                         {
-                            try
-                            {
-                                HttpWebRequest request2 = (HttpWebRequest)s.AsyncState;
-                                HttpWebResponse response = (HttpWebResponse)request2.EndGetResponse(s);
+                            sgmlReader.DocType = "HTML";
+                            sgmlReader.CaseFolding = CaseFolding.ToLower;
 
-                                Stream streamResponse = response.GetResponseStream();
-                                StreamReader streamReader = new StreamReader(streamResponse);
-                                string response2 = streamReader.ReadToEnd();
-                                streamResponse.Close();
-                                streamReader.Close();
-                                response.Close();
-                                //act("hoge");
-                                act(response2);
-                                return;
-                            }
-                            catch
-                            {
-                            }
-                        },
-                    request1);
-                }
-                catch
-                {
-                }
-            }, webRequest);
+                            var doc = XElement.Load(sgmlReader);
+                            var ns = doc.Name.Namespace;
+                            var q = from ele in doc.Descendants(ns + "div")
+                                    .Where(ul => ul.Attribute("class") != null
+                                        && ul.Attribute("class").Value == "result")
+                                    .Elements(ns + "div")
+                                    select new ShindanItem
+                                    {
+                                        Text = ele.Value//Element(ns + "div").Element(ns + "h1").Value,
+                                    };
+                            char[] sep = { ' ', '\n', '\t' };
+                            //re.Title = q.First().Text.Split(sep, StringSplitOptions.RemoveEmptyEntries)[0];
+                            act(q.First().Text.Split(sep, StringSplitOptions.RemoveEmptyEntries)[0]);
+                        }
 
-
+                    }
+                    catch (WebException ex)
+                    {
+                        // Error treatment
+                        // ...
+                    }
+                }), webRequest1);
+            }), webRequest);    
         }
     }
 }
